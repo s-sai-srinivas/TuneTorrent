@@ -1,0 +1,88 @@
+name: TuneTorrent
+bundleIdPrefix: com.708cn
+xcodeVersion: "15.0"
+options:
+  bundleIdPrefix: com.708cn
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.4"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGNING_ALLOWED: "NO"
+
+targets:
+  TuneTorrent:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.4"
+    sources:
+      - path: TuneTorrent
+        excludes:
+          - "**/*.md"
+    settings:
+      base:
+        INFOPLIST_FILE: TuneTorrent/Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.708cn.tunetorrent
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        SWIFT_EMIT_LOC_STRINGS: YES
+        CODE_SIGN_STYLE: Manual
+    info:
+      path: TuneTorrent/Resources/Info.plist
+      properties:
+        CFBundleName: TuneTorrent
+        CFBundleIdentifier: com.708cn.tunetorrent
+        UILaunchStoryboardName: LaunchScreen
+        UIBackgroundModes: [audio, fetch]
+        NSAppleMusicUsageDescription: Access your music library to play songs.
+        LSSupportsOpeningDocumentsInPlace: true
+        UISupportsDocumentBrowser: false
+        NSSupportsLiveActivities: true
+        NSSupportsLiveActivitiesFrequentUpdates: true
+    entitlements:
+      properties:
+        com.apple.developer.background-modes: [audio, fetch]
+
+  TuneTorrentTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.4"
+    sources: [TuneTorrentTests]
+    dependencies:
+      - target: TuneTorrent
+
+  TuneTorrentUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.4"
+    sources: [TuneTorrentUITests]
+    dependencies:
+      - target: TuneTorrent
+
+  TuneTorrentWidgetExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.4"
+    sources: [TuneTorrentWidget]
+    settings:
+      base:
+        INFOPLIST_FILE: TuneTorrentWidget/Info.plist
+
+schemes:
+  TuneTorrent:
+    build:
+      targets:
+        TuneTorrent: all
+        TuneTorrentTests: [test]
+        TuneTorrentUITests: [test]
+    test:
+      targets: [TuneTorrentTests, TuneTorrentUITests]
+      gatherCoverageData: true
+    run:
+      config: Debug
+    archive:
+      config: Release

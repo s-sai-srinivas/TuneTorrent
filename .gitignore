@@ -1,0 +1,22 @@
+# Xcode
+DerivedData/
+*.xcuserdata/
+*.xcworkspace/xcuserdata/
+build/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift
+.swiftpm/
+Package.resolved
+
+# Graphify
+graphify-out/
+
+# macOS
+.DS_Store
+
+# Env
+.env

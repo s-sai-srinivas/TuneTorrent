@@ -1,0 +1,5 @@
+// Stub - generate with xcodegen or Xcode on macOS
+// Run: mkdir TuneTorrent.xcodeproj on macOS via Xcode -> New Project -> SwiftUI App
+// Bundle ID: com.708cn.tunetorrent, iOS 17.4, Swift 5.10
+// Add SwiftData, AVFoundation, MediaPlayer, UniformTypeIdentifiers
+// This stub allows GitHub Actions to create project via xcodegen if needed.

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key><string>TuneTorrent</string>
+    <key>CFBundleIdentifier</key><string>com.708cn.tunetorrent</string>
+    <key>CFBundleVersion</key><string>1</string>
+    <key>CFBundleShortVersionString</key><string>1.0</string>
+    <key>UILaunchStoryboardName</key><string>LaunchScreen</string>
+    <key>UIBackgroundModes</key><array><string>audio</string><string>fetch</string></array>
+    <key>NSAppleMusicUsageDescription</key><string>Access your music library to play songs.</string>
+    <key>LSSupportsOpeningDocumentsInPlace</key><true/>
+    <key>UISupportsDocumentBrowser</key><false/>
+    <key>UIApplicationSceneManifest</key><dict><key>UIApplicationSupportsMultipleScenes</key><false/></dict>
+    <key>NSSupportsLiveActivities</key><true/>
+    <key>NSSupportsLiveActivitiesFrequentUpdates</key><true/>
+</dict>
+</plist>
