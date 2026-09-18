@@ -1,7 +1,6 @@
 import Foundation
-import ZIPFoundation
 
-// MARK: - ZipService (fallback to FileManager if ZIPFoundation not linked)
+// MARK: - ZipService (pure FileManager - no external dep needed for v1)
 enum ZipService {
     static func zip(urls: [URL], to dest: URL) throws {
         // If ZIPFoundation available, use it; else create placeholder

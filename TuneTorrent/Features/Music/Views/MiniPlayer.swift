@@ -36,7 +36,7 @@ struct FullPlayerView: View {
                         RoundedRectangle(cornerRadius: 28, style:.continuous).fill(Theme.accentGradient).frame(width: 300, height: 300).shadow(color:Theme.accent.opacity(0.35), radius:24, y:12)
                         Image(systemName: "music.note").font(.system(size: 72, weight:.thin)).foregroundStyle(.white.opacity(0.95))
                     }.padding(.top, 10)
-                    Text(playback.currentTitle).font(.title2.weight(.800)).multilineTextAlignment(.center)
+                    Text(playback.currentTitle).font(.title2.weight(.heavy)).multilineTextAlignment(.center)
                     Text(playback.queue.first?.artist ?? "TuneTorrent").font(.subheadline).foregroundStyle(.secondary)
                     GlassCard{
                         VStack(spacing:8){
