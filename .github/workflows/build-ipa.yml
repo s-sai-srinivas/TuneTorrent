@@ -8,13 +8,13 @@ jobs:
       - name: Install xcodegen
         run: brew install xcodegen
       - name: Generate Xcode project (no Mac needed locally)
-        run: cd app && xcodegen generate
+        run: xcodegen generate
       - uses: maxim-lobanov/setup-xcode@v1
         with: { xcode-version: latest-stable }
       - name: Run Unit Tests
-        run: xcodebuild test -project app/TuneTorrent.xcodeproj -scheme TuneTorrent -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -only-testing:TuneTorrentTests | xcpretty
+        run: xcodebuild test -project TuneTorrent.xcodeproj -scheme TuneTorrent -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -only-testing:TuneTorrentTests | xcpretty
       - name: Run XCUITests (33 tests - Tab/Music/Torrent/Files/Settings)
-        run: xcodebuild test -project app/TuneTorrent.xcodeproj -scheme TuneTorrent -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -only-testing:TuneTorrentUITests | xcpretty
+        run: xcodebuild test -project TuneTorrent.xcodeproj -scheme TuneTorrent -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -only-testing:TuneTorrentUITests | xcpretty
   build:
     needs: test
     runs-on: macos-14
@@ -23,12 +23,12 @@ jobs:
       - name: Install xcodegen
         run: brew install xcodegen
       - name: Generate Xcode project
-        run: cd app && xcodegen generate
+        run: xcodegen generate
       - uses: maxim-lobanov/setup-xcode@v1
         with: { xcode-version: latest-stable }
       - name: Archive
-        run: xcodebuild -project app/TuneTorrent.xcodeproj -scheme TuneTorrent -configuration Release archive -archivePath build/TuneTorrent.xcarchive CODE_SIGNING_ALLOWED=NO | xcpretty
+        run: xcodebuild -project TuneTorrent.xcodeproj -scheme TuneTorrent -configuration Release archive -archivePath build/TuneTorrent.xcarchive CODE_SIGNING_ALLOWED=NO | xcpretty
       - name: Export IPA
-        run: xcodebuild -exportArchive -archivePath build/TuneTorrent.xcarchive -exportPath build -exportOptionsPlist app/ExportOptions.plist
+        run: xcodebuild -exportArchive -archivePath build/TuneTorrent.xcarchive -exportPath build -exportOptionsPlist ExportOptions.plist
       - uses: actions/upload-artifact@v4
         with: { name: TuneTorrent-ipa, path: build/*.ipa }
