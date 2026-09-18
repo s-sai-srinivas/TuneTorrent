@@ -41,7 +41,7 @@ struct AddTorrentSheet: View {
                                 // space check done in vm
                                 try await vm.add(magnet: vm.magnetText, context: ctx)
                                 dismiss()
-                            } catch { error = error.localizedDescription }
+                            } catch let e { error = e.localizedDescription }
                         }
                     }.disabled(!vm.magnetText.hasPrefix("magnet:"))
                 }

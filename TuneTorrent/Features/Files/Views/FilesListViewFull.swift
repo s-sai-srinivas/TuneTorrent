@@ -112,7 +112,8 @@ struct FilesListViewFull: View {
     }
 }
 
-extension URL: Identifiable { public var id: String { absoluteString } }
+// URL Identifiable via extension - use file path as id where needed (avoid global URL:Identifiable clash)
+extension URL { var fileID: String { absoluteString } }
 
 // MARK: - FileRowFull (with thumbnail)
 struct FileRowFull: View {
