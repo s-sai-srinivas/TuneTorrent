@@ -29,19 +29,26 @@ jobs:
       - name: Archive (unsigned for sideload)
         run: |
           set -x
-          xcodebuild archive -project TuneTorrent.xcodeproj -scheme TuneTorrent -configuration Release -destination generic/platform=iOS -archivePath $PWD/build/TuneTorrent.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" SKIP_INSTALL=NO | xcpretty
+          mkdir -p build
+          pwd; ls -la
+          xcodebuild archive -project TuneTorrent.xcodeproj -scheme TuneTorrent -configuration Release -destination generic/platform=iOS -archivePath ./build/TuneTorrent.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" SKIP_INSTALL=NO | tee build/archive.log | xcpretty || true
+          echo "=== ARCHIVE EXIT CODE ==="; echo $?
           echo "=== ARCHIVE CONTENTS ==="
-          ls -R build/TuneTorrent.xcarchive 2>&1 | head -n 120 || true
-          echo "=== LOOK FOR BINARY IN ARCHIVE ==="
-          find build/TuneTorrent.xcarchive -name "TuneTorrent" -type f 2>&1 | head -n 20 || true
-          find build/TuneTorrent.xcarchive -name "*.app" -type d 2>&1 | head -n 20 || true
-          ls -lh build/TuneTorrent.xcarchive/Products/Applications/TuneTorrent.app/ 2>&1 | head -n 40 || true
-          du -sh build/TuneTorrent.xcarchive 2>&1 | head -n 5 || true
+          ls -lh build/ 2>&1 | head -n 30 || true
+          ls -R build/TuneTorrent.xcarchive 2>&1 | head -n 150 || true
+          cat build/archive.log 2>&1 | tail -n 100 || true
       - name: Export IPA (sideload - manual Payload zip)
         run: |
           set -x
+          echo "=== PRE CHECK ==="; ls -lh build/ 2>&1 | head -n 30 || true
+          if [ ! -d "build/TuneTorrent.xcarchive" ]; then
+            echo "No xcarchive found, check log above - failing"
+            cat build/archive.log 2>&1 | tail -n 150 || true
+            exit 1
+          fi
           APP="build/TuneTorrent.xcarchive/Products/Applications/TuneTorrent.app"
           echo "Checking explicit APP: $APP"
+          ls -lh "$APP" 2>&1 | head -n 40 || true
           ls -lh "$APP/TuneTorrent" 2>&1 | head -n 10 || echo "binary not at explicit path"
           if [ ! -f "$APP/TuneTorrent" ]; then
             APP=$(find build/TuneTorrent.xcarchive -name "TuneTorrent.app" -type d | head -n1)
@@ -60,7 +67,6 @@ jobs:
             mkdir -p build/Payload
             cp -R "$APP" build/Payload/
             cd build && rm -f TuneTorrent.ipa && zip -r TuneTorrent.ipa Payload && ls -lh *.ipa && du -sh TuneTorrent.ipa && echo "IPA ready $(du -sh TuneTorrent.ipa | cut -f1)"
-            # also verify IPA contains binary
             unzip -l TuneTorrent.ipa | head -n 30 || true
           else
             echo "No valid .app with binary found - failing"
