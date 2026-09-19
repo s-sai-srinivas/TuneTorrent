@@ -21,7 +21,7 @@ final class FilesViewModel: ObservableObject {
 
     enum Sort { case name, date, size, type }
 
-    private let fmService: FileManagerServiceProtocol
+    let fmService: FileManagerServiceProtocol
     private let analyzer = StorageAnalyzerService()
 
     init(fmService: FileManagerServiceProtocol = FileManagerService()) {

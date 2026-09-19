@@ -104,7 +104,7 @@ struct FilesListViewFull: View {
             }
         }
         .alert("Import Failed", isPresented: .constant(importError != nil)) { Button("OK") { importError = nil } } message: { Text(importError ?? "") }
-        .sheet(item: $previewURL) { url in QuickLookPreview(url: url) }
+        .sheet(item: Binding(get: { previewURL.map{ IdentifiableURL(url: $0) } }, set: { previewURL = $0?.url })) { item in QuickLookPreview(url: item.url) }
     }
 
     private func handleTap(_ item: FileItem) {
@@ -112,7 +112,8 @@ struct FilesListViewFull: View {
     }
 }
 
-// URL Identifiable via extension - use file path as id where needed (avoid global URL:Identifiable clash)
+struct IdentifiableURL: Identifiable { let url: URL; var id: String { url.absoluteString } }
+// URL helper
 extension URL { var fileID: String { absoluteString } }
 
 // MARK: - FileRowFull (with thumbnail)
@@ -142,7 +143,7 @@ struct FileRowFull: View {
             }
             Spacer()
             if !selecting { Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.secondary) }
-        }.contentShape(Rectangle).onTapGesture { selecting ? onSelect() : onTap() }
+        }.contentShape(Rectangle()).onTapGesture { selecting ? onSelect() : onTap() }
         .task{ thumb = await ThumbnailService().thumbnail(for: item.url, size: CGSize(width:96,height:96)) }
     }
 }

@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import AVKit
 
 // MARK: - MiniPlayerView (glassy floating)
 struct MiniPlayerView: View {
