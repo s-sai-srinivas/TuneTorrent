@@ -70,7 +70,7 @@ final class PlaybackService: ObservableObject {
     func next() { player.advanceToNextItem() }
     func prev() {}
     func seek(to seconds: Double) { player.seek(to: CMTime(seconds: seconds, preferredTimescale: 600)) }
-    func seek(to ratio: Double) { seek(to: ratio * duration) }
+    func seek(toRatio ratio: Double) { seek(to: ratio * duration) }
     var repeatIcon: String { switch repeatMode { case .off: return "repeat"; case .one: return "repeat.1"; case .all: return "repeat.circle.fill" } }
     func cycleRepeat() { repeatMode = repeatMode == .off ? .all : repeatMode == .all ? .one : .off }
     func shuffleQueue(_ on: Bool) { shuffle = on }

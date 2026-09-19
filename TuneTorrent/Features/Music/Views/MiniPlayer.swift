@@ -31,7 +31,7 @@ struct FullPlayerView: View {
     @State private var currentLyrics: String? = "Line 1 — We are tunetorrent\nLine 2 — Glass like iPhone 18\n(Real lyrics load from .lrc or AVAsset)"
     var body: some View {
         NavigationStack {
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: true) {
                 VStack(spacing: 16) {
                     ZStack{
                         RoundedRectangle(cornerRadius: 28, style:.continuous).fill(Theme.accentGradient).frame(width: 300, height: 300).shadow(color:Theme.accent.opacity(0.35), radius:24, y:12)

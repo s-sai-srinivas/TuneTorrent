@@ -21,10 +21,10 @@ final class MusicViewModel: ObservableObject {
     private let scanService: FileScanServiceProtocol
     private let playback: PlaybackService
 
-    init(mediaService: MediaLibraryServiceProtocol = MediaLibraryService(), scanService: FileScanServiceProtocol = FileScanService(), playback: PlaybackService = .shared) {
+    init(mediaService: MediaLibraryServiceProtocol = MediaLibraryService(), scanService: FileScanServiceProtocol = FileScanService(), playback: PlaybackService? = nil) {
         self.mediaService = mediaService
         self.scanService = scanService
-        self.playback = playback
+        self.playback = playback ?? PlaybackService.shared
     }
 
     func load() async {

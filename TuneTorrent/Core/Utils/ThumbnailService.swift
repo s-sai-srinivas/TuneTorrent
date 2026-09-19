@@ -20,7 +20,8 @@ actor ThumbnailService {
             }
         }
         if ["mp4","mov","m4v","mkv","avi"].contains(ext) {
-            let req = QLThumbnailGenerator.Request(fileAt: url, size: size, scale: UIScreen.main.scale, representationTypes: .thumbnail)
+            let scale: CGFloat = await MainActor.run { UIScreen.main.scale }
+            let req = QLThumbnailGenerator.Request(fileAt: url, size: size, scale: scale, representationTypes: .thumbnail)
             if let thumb = try? await QLThumbnailGenerator.shared.generateBestRepresentation(for: req) {
                 cache[key]=thumb.uiImage; return thumb.uiImage
             }
