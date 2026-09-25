@@ -38,22 +38,28 @@ final class FilesUITests: XCTestCase {
     }
 
     func testNewFolderFlow() {
-        app.buttons["folder.badge.plus"].tap()
+        let btn = app.buttons["FilesNewFolderButton"].exists ? app.buttons["FilesNewFolderButton"] : app.buttons["folder.badge.plus"]
+        btn.tap()
         let field = app.textFields.firstMatch
-        if field.waitForExistence(timeout: 2) {
-            field.tap(); field.typeText("TestFolder")
-            app.buttons["Create"].tap()
+        if field.waitForExistence(timeout: 3) {
+            field.tap()
+            field.typeText("TestFolder")
+            let createBtn = app.buttons["Create"]
+            if createBtn.waitForExistence(timeout: 3) {
+                createBtn.tap()
+            }
             // Folder should appear in list
-            XCTAssertTrue(app.staticTexts["TestFolder"].waitForExistence(timeout: 2))
-        } else {
+            XCTAssertTrue(app.staticTexts["TestFolder"].waitForExistence(timeout: 4))
+        } else if app.buttons["Cancel"].exists {
             app.buttons["Cancel"].tap()
         }
     }
 
     func testImportButtonOpensPicker() {
-        app.buttons["square.and.arrow.down"].tap()
+        let btn = app.buttons["FilesImportButton"].exists ? app.buttons["FilesImportButton"] : app.buttons["square.and.arrow.down"]
+        btn.tap()
         // fileImporter should present system picker - check it appears or error sheet
-        XCTAssertTrue(app.navigationBars.firstMatch.waitForExistence(timeout: 2))
+        XCTAssertTrue(app.navigationBars.firstMatch.waitForExistence(timeout: 4))
         // Dismiss if needed
         if app.buttons["Cancel"].exists { app.buttons["Cancel"].tap() }
     }

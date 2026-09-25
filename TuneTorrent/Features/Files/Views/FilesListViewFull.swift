@@ -103,11 +103,11 @@ struct FilesListViewFull: View {
             ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: 12) {
                     Button { showImporter = true } label: { Image(systemName: "square.and.arrow.down") }
-                        .accessibilityLabel("square.and.arrow.down")
-                        .accessibilityIdentifier("square.and.arrow.down")
+                        .accessibilityIdentifier("FilesImportButton")
+                        .accessibilityLabel("Import")
                     Button { showNewFolder = true } label: { Image(systemName: "folder.badge.plus") }
-                        .accessibilityLabel("folder.badge.plus")
-                        .accessibilityIdentifier("folder.badge.plus")
+                        .accessibilityIdentifier("FilesNewFolderButton")
+                        .accessibilityLabel("New Folder")
                 }
             }
         }
