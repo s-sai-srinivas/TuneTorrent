@@ -12,9 +12,13 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with: { xcode-version: latest-stable }
       - name: Run Unit Tests
-        run: xcodebuild test -project TuneTorrent.xcodeproj -scheme TuneTorrent -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -only-testing:TuneTorrentTests | xcpretty
+        run: |
+          set -o pipefail
+          xcodebuild test -project TuneTorrent.xcodeproj -scheme TuneTorrent -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:TuneTorrentTests | xcpretty
       - name: Run XCUITests (33 tests)
-        run: xcodebuild test -project TuneTorrent.xcodeproj -scheme TuneTorrent -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -only-testing:TuneTorrentUITests | xcpretty
+        run: |
+          set -o pipefail
+          xcodebuild test -project TuneTorrent.xcodeproj -scheme TuneTorrent -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:TuneTorrentUITests | xcpretty
   build:
     needs: test
     runs-on: macos-14
