@@ -112,7 +112,15 @@ struct FilesListViewFull: View {
             }
         }
         .task { vm.load() }
-        .alert("New Folder", isPresented: $showNewFolder) { TextField("Name", text: $folderName); Button("Create") { vm.createFolder(name: folderName); folderName = "" }; Button("Cancel", role: .cancel) {} }
+        .alert("New Folder", isPresented: $showNewFolder) {
+            TextField("Name", text: $folderName).accessibilityIdentifier("NewFolderNameField")
+            Button("Create") {
+                let targetName = folderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "New Folder" : folderName
+                vm.createFolder(name: targetName)
+                folderName = ""
+            }
+            Button("Cancel", role: .cancel) { folderName = "" }
+        }
         .alert("Rename", isPresented: $showRename) {
             TextField("Name", text: $renameText)
             Button("Save") {

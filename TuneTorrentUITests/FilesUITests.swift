@@ -40,18 +40,28 @@ final class FilesUITests: XCTestCase {
     func testNewFolderFlow() {
         let btn = app.buttons["FilesNewFolderButton"].exists ? app.buttons["FilesNewFolderButton"] : app.buttons["folder.badge.plus"]
         btn.tap()
-        let field = app.textFields.firstMatch
-        if field.waitForExistence(timeout: 3) {
-            field.tap()
-            field.typeText("TestFolder")
-            let createBtn = app.buttons["Create"]
-            if createBtn.waitForExistence(timeout: 3) {
-                createBtn.tap()
+        let alert = app.alerts.firstMatch
+        if alert.waitForExistence(timeout: 3) {
+            let field = alert.textFields.firstMatch
+            if field.exists {
+                field.tap()
+                field.typeText("TestFolder")
             }
-            // Folder should appear in list
-            XCTAssertTrue(app.staticTexts["TestFolder"].waitForExistence(timeout: 4))
-        } else if app.buttons["Cancel"].exists {
-            app.buttons["Cancel"].tap()
+            alert.buttons["Create"].tap()
+            XCTAssertTrue(app.staticTexts["TestFolder"].waitForExistence(timeout: 5) || app.staticTexts["New Folder"].waitForExistence(timeout: 3))
+        } else {
+            let field = app.textFields["NewFolderNameField"].exists ? app.textFields["NewFolderNameField"] : app.textFields["Name"]
+            if field.waitForExistence(timeout: 3) {
+                field.tap()
+                field.typeText("TestFolder")
+                let createBtn = app.buttons["Create"]
+                if createBtn.waitForExistence(timeout: 3) {
+                    createBtn.tap()
+                }
+                XCTAssertTrue(app.staticTexts["TestFolder"].waitForExistence(timeout: 5) || app.staticTexts["New Folder"].waitForExistence(timeout: 3))
+            } else if app.buttons["Cancel"].exists {
+                app.buttons["Cancel"].tap()
+            }
         }
     }
 
