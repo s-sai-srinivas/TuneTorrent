@@ -13,7 +13,7 @@ struct TorrentSettingsSheet: View {
             Form {
                 Section(header: Text("Speed — Unrestricted Fast")) {
                     VStack(alignment:.leading, spacing:8){
-                        HStack{ Image(systemName:"bolt.fill").foregroundStyle(.yellow); Text("Download: UNLIMITED (fastest)").font(.subheadline.weight(.semibold)); Spacer(); Text("No cap").font(.caption.weight(.bold)).foregroundStyle(.green).padding(4).background(Color.green.opacity(0.15), in:Capsule()) }
+                        HStack{ Image(systemName:"bolt.fill").foregroundStyle(.yellow); Text("Download: UNLIMITED (fastest)").font(.subheadline.weight(.semibold)); Spacer(); Text("UNLIMITED").font(.caption.weight(.bold)).foregroundStyle(.green).padding(4).background(Color.green.opacity(0.15), in:Capsule()) }
                         Text("Your torrents use full WiFi/data speed. No throttling.").font(.caption2).foregroundStyle(.secondary)
                         Toggle("Enable download cap (slow down if needed)", isOn: Binding(get:{dlLimit>0}, set:{ dlLimit = $0 ? 1000 : 0 }))
                         if dlLimit>0 {

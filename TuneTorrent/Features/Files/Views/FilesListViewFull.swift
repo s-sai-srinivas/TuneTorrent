@@ -102,8 +102,12 @@ struct FilesListViewFull: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: 12) {
-                    Button { showImporter = true } label: { Label("Import", systemImage: "square.and.arrow.down") }.accessibilityIdentifier("FilesImportButton")
-                    Button { showNewFolder = true } label: { Image(systemName: "folder.badge.plus") }.accessibilityIdentifier("FilesNewFolderButton")
+                    Button { showImporter = true } label: { Image(systemName: "square.and.arrow.down") }
+                        .accessibilityLabel("square.and.arrow.down")
+                        .accessibilityIdentifier("square.and.arrow.down")
+                    Button { showNewFolder = true } label: { Image(systemName: "folder.badge.plus") }
+                        .accessibilityLabel("folder.badge.plus")
+                        .accessibilityIdentifier("folder.badge.plus")
                 }
             }
         }

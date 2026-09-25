@@ -63,7 +63,7 @@ struct SongsViewFull: View {
                                     }
                                 }
                             }
-                        }.padding(.vertical, 8)
+                        }.padding(.vertical, 8).padding(.bottom, 60)
                     }
                 }
             case .albums:
@@ -83,7 +83,6 @@ struct SongsViewFull: View {
                 ActivityView(activityItems: shareSongURLs)
             }
         }
-        .overlay(alignment: .bottom) { MiniPlayerView { showPlayer = true } }
     }
 }
 

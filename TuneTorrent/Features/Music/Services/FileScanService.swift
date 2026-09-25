@@ -13,6 +13,8 @@ actor FileScanService: FileScanServiceProtocol {
         await Task.detached(priority: .utility) { [exts] in
             guard let enumerator = FileManager.default.enumerator(at: root, includingPropertiesForKeys: [.fileSizeKey, .creationDateKey], options: [.skipsHiddenFiles]) else { return [Song]() }
             var out: [Song] = []
+            let rootStandard = root.resolvingSymlinksInPath().standardizedFileURL.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            
             for case let url as URL in enumerator {
                 guard exts.contains(url.pathExtension.lowercased()) else { continue }
                 let vals = try? url.resourceValues(forKeys: [.fileSizeKey, .creationDateKey])
@@ -21,8 +23,15 @@ actor FileScanService: FileScanServiceProtocol {
                 let duration = try? await asset.load(.duration)
                 let secs = duration?.seconds ?? 0
                 let title = url.deletingPathExtension().lastPathComponent
-                // relative path
-                let rel = url.path.replacingOccurrences(of: root.path + "/", with: "")
+                
+                // Robust relative path calculation
+                let fileStandard = url.resolvingSymlinksInPath().standardizedFileURL.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+                var rel = url.lastPathComponent
+                if fileStandard.hasPrefix(rootStandard) {
+                    let sub = String(fileStandard.dropFirst(rootStandard.count)).trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+                    if !sub.isEmpty { rel = sub }
+                }
+                
                 var artist = "Unknown", album = "Downloads", artwork: Data? = nil
                 if let meta = try? await asset.load(.commonMetadata) {
                     for item in meta {

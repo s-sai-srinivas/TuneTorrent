@@ -26,6 +26,22 @@ final class Song {
             return URL(string: urlPath)
         }
         guard let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
-        return docDir.appendingPathComponent(urlPath)
+        let clean = urlPath.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        
+        let relativeURL = docDir.appendingPathComponent(clean)
+        if FileManager.default.fileExists(atPath: relativeURL.path) {
+            return relativeURL
+        }
+        
+        let resolvedRelative = docDir.resolvingSymlinksInPath().appendingPathComponent(clean)
+        if FileManager.default.fileExists(atPath: resolvedRelative.path) {
+            return resolvedRelative
+        }
+        
+        if urlPath.hasPrefix("/"), FileManager.default.fileExists(atPath: urlPath) {
+            return URL(fileURLWithPath: urlPath)
+        }
+        
+        return relativeURL
     }
 }

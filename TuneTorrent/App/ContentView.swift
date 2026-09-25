@@ -3,22 +3,37 @@ import SwiftUI
 // MARK: - ContentView
 struct ContentView: View {
     @State private var selectedTab = 0
+    @ObservedObject private var playback = PlaybackService.shared
+    @State private var showFullPlayer = false
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            MusicTabView()
-                .tabItem { Label("Music", systemImage: "music.note") }.tag(0)
-                .accessibilityIdentifier("MusicTab")
-            TorrentTabView()
-                .tabItem { Label("Torrent", systemImage: "arrow.down.circle") }.badge(TorrentBadge.count).tag(1)
-                .accessibilityIdentifier("TorrentTab")
-            FilesTabView()
-                .tabItem { Label("Files", systemImage: "folder") }.tag(2)
-                .accessibilityIdentifier("FilesTab")
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selectedTab) {
+                MusicTabView()
+                    .tabItem { Label("Music", systemImage: "music.note") }.tag(0)
+                    .accessibilityIdentifier("MusicTab")
+                TorrentTabView()
+                    .tabItem { Label("Torrent", systemImage: "arrow.down.circle") }.badge(TorrentBadge.count).tag(1)
+                    .accessibilityIdentifier("TorrentTab")
+                FilesTabView()
+                    .tabItem { Label("Files", systemImage: "folder") }.tag(2)
+                    .accessibilityIdentifier("FilesTab")
+            }
+            .accessibilityIdentifier("MainTabView")
+            .tint(Theme.accent)
+            .toolbarBackground(.ultraThinMaterial, for: .tabBar)
+
+            if playback.currentTitle != "Not Playing" || playback.isPlaying || playback.currentSong != nil {
+                MiniPlayerView {
+                    showFullPlayer = true
+                }
+                .padding(.bottom, 54)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
-        .accessibilityIdentifier("MainTabView")
-        .tint(Theme.accent)
-        .toolbarBackground(.ultraThinMaterial, for: .tabBar)
+        .sheet(isPresented: $showFullPlayer) {
+            FullPlayerView()
+        }
     }
 }
 

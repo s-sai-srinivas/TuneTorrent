@@ -11,13 +11,20 @@ struct AddTorrentSheet: View {
     @State private var preflightFiles: [String] = []
     @State private var selections: [Bool] = []
 
+    var isValid: Bool {
+        let t = vm.magnetText.trimmingCharacters(in: .whitespacesAndNewlines)
+        return t.hasPrefix("magnet:") || t.hasPrefix("http://") || t.hasPrefix("https://") || t.hasPrefix("file://")
+    }
+
     var body: some View {
         NavigationStack {
             Form {
-                Section("Magnet Link") {
+                Section("Magnet Link or Direct URL") {
                     TextField("magnet:?xt=urn:btih:...", text: $vm.magnetText)
                     HStack {
-                        Button("Paste") { if let s = UIPasteboard.general.string { vm.magnetText = s } }
+                        Button("Paste") {
+                            if let s = UIPasteboard.general.string { vm.magnetText = s }
+                        }
                         Spacer()
                         Button("Import .torrent") { showPicker = true }
                     }
@@ -30,7 +37,6 @@ struct AddTorrentSheet: View {
                                 Text(preflightFiles[i]).font(.caption)
                             }
                         }
-                        Text("Save to: Documents/Downloads/\(vm.magnetText.prefix(12))").font(.caption2).foregroundStyle(.secondary)
                     }
                 }
                 if let e = error { Section { Text(e).foregroundStyle(.red).font(.caption) } }
@@ -38,18 +44,21 @@ struct AddTorrentSheet: View {
                     Button("Start Download") {
                         Task {
                             do {
-                                // space check done in vm
                                 try await vm.add(magnet: vm.magnetText, context: ctx)
                                 dismiss()
                             } catch let e { error = e.localizedDescription }
                         }
-                    }.disabled(!vm.magnetText.hasPrefix("magnet:"))
+                    }.disabled(!isValid)
                 }
             }
             .navigationTitle("Add Torrent")
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
             .fileImporter(isPresented: $showPicker, allowedContentTypes: [UTType.data]) { result in
-                if case .success(let url) = result { vm.magnetText = url.absoluteString; preflightFiles = ["file1.mp3","file2.mp3"] ; selections = [true,true] }
+                if case .success(let url) = result {
+                    vm.magnetText = url.absoluteString
+                    preflightFiles = [url.deletingPathExtension().lastPathComponent + ".mp3"]
+                    selections = [true]
+                }
             }
         }
     }

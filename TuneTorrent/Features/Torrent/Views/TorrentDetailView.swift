@@ -47,11 +47,13 @@ struct TorrentDetailView: View {
                     Button("Resume") { vm.resume(item) }
                 }
                 if let saveURL = item.saveURL, FileManager.default.fileExists(atPath: saveURL.path) {
+                    let files = (try? FileManager.default.contentsOfDirectory(at: saveURL, includingPropertiesForKeys: nil)) ?? []
+                    let targetPreview = files.first(where: { !$0.lastPathComponent.hasPrefix(".") }) ?? saveURL
                     Button("Open File / Folder") {
-                        previewURL = saveURL
+                        previewURL = targetPreview
                     }
                     Button("Share") {
-                        shareURLs = [saveURL]
+                        shareURLs = files.isEmpty ? [saveURL] : files
                         showShare = true
                     }
                 }
