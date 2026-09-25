@@ -23,7 +23,8 @@ enum TorrentParser {
             let kv = pair.components(separatedBy: "=")
             guard kv.count >= 2 else { continue }
             let key = kv[0]
-            let val = kv.dropFirst().joined(separator: "=").removingPercentEncoding ?? kv[1]
+            let rawVal = kv.dropFirst().joined(separator: "=")
+            let val = rawVal.replacingOccurrences(of: "+", with: " ").removingPercentEncoding ?? rawVal
 
             if key == "xt" && val.hasPrefix("urn:btih:") {
                 hash = String(val.dropFirst("urn:btih:".count))
