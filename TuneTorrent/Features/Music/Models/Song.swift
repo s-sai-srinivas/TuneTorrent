@@ -21,5 +21,11 @@ final class Song {
     init(id: UUID = UUID(), urlPath: String, title: String, artist: String = "Unknown", album: String = "Unknown", duration: Double = 0, fileSize: Int64 = 0, artworkData: Data? = nil, createdAt: Date = .now, isFavorite: Bool = false, lyrics: String? = nil) {
         self.id = id; self.urlPath = urlPath; self.title = title; self.artist = artist; self.album = album; self.duration = duration; self.fileSize = fileSize; self.artworkData = artworkData; self.createdAt = createdAt; self.isFavorite = isFavorite; self.lyrics = lyrics
     }
-    var url: URL? { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(urlPath) }
+    var url: URL? {
+        if urlPath.contains("://") {
+            return URL(string: urlPath)
+        }
+        guard let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        return docDir.appendingPathComponent(urlPath)
+    }
 }

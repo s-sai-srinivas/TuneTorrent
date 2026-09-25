@@ -44,7 +44,7 @@ final class FilesUITests: XCTestCase {
             field.tap(); field.typeText("TestFolder")
             app.buttons["Create"].tap()
             // Folder should appear in list
-            XCTAssertTrue(app.staticTexts["TestFolder"].waitForExistence(timeout: 2) || true)
+            XCTAssertTrue(app.staticTexts["TestFolder"].waitForExistence(timeout: 2))
         } else {
             app.buttons["Cancel"].tap()
         }
@@ -69,7 +69,7 @@ final class FilesUITests: XCTestCase {
 
     func testHiddenToggle() {
         // HiddenToggleView eye
-        XCTAssertTrue(app.switches.firstMatch.waitForExistence(timeout: 2) || app.staticTexts["Show hidden files"].exists || true)
+        XCTAssertTrue(app.switches.firstMatch.waitForExistence(timeout: 2) || app.staticTexts["Show hidden files"].exists)
     }
 
     func testThumbnailAppears() {

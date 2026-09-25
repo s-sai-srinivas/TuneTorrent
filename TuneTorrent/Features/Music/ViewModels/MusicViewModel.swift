@@ -30,7 +30,12 @@ final class MusicViewModel: ObservableObject {
     func load() async {
         isLoading = true
         async let a = mediaService.fetchAllSongs()
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        guard let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            songs = await a
+            apply()
+            isLoading = false
+            return
+        }
         async let b = scanService.scanAudioFiles(in: docs)
         let (m, f) = await (a, b)
         var all = m + f

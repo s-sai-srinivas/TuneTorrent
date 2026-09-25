@@ -26,7 +26,7 @@ final class FilesViewModel: ObservableObject {
 
     init(fmService: FileManagerServiceProtocol = FileManagerService()) {
         self.fmService = fmService
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Documents")
         self.currentURL = docs
         self.breadcrumbs = [docs]
     }
@@ -34,7 +34,11 @@ final class FilesViewModel: ObservableObject {
     func load() {
         do { items = try fmService.contents(of: currentURL) } catch { items = [] }
         apply()
-        Task { breakdown = await analyzer.breakdown(root: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!) }
+        Task {
+            if let root = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                breakdown = await analyzer.breakdown(root: root)
+            }
+        }
     }
 
     func apply() {
@@ -56,7 +60,14 @@ final class FilesViewModel: ObservableObject {
         load()
     }
 
-    func goBack() { guard breadcrumbs.count > 1 else { return }; breadcrumbs.removeLast(); currentURL = breadcrumbs.last!; load() }
+    func goBack() {
+        guard breadcrumbs.count > 1 else { return }
+        breadcrumbs.removeLast()
+        if let last = breadcrumbs.last {
+            currentURL = last
+            load()
+        }
+    }
 
     var selectedItems: [FileItem] { items.filter { selection.contains($0.id) } }
     var totalSelectedSize: Int64 { selectedItems.reduce(0) { $0 + $1.size } }
@@ -79,4 +90,23 @@ final class FilesViewModel: ObservableObject {
         try ZipService.zip(urls: urls, to: dest); load()
     }
     func createFolder(name: String) { let u = currentURL.appendingPathComponent(name); try? FileManager.default.createDirectory(at: u, withIntermediateDirectories: true); load() }
+
+    func rename(_ item: FileItem, to newName: String) throws {
+        _ = try fmService.rename(item.url, to: newName)
+        load()
+    }
+
+    func moveSelected(to dest: URL) throws {
+        let urls = selectedItems.map { $0.url }
+        try fmService.move(urls, to: dest)
+        selection.removeAll()
+        load()
+    }
+
+    func copySelected(to dest: URL) throws {
+        let urls = selectedItems.map { $0.url }
+        try fmService.copy(urls, to: dest)
+        selection.removeAll()
+        load()
+    }
 }

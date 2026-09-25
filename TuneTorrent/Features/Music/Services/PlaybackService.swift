@@ -67,8 +67,29 @@ final class PlaybackService: ObservableObject {
     func toggle() { isPlaying ? pause() : resume() }
     func pause() { player.pause(); isPlaying = false }
     func resume() { player.play(); isPlaying = true }
-    func next() { player.advanceToNextItem() }
-    func prev() {}
+    private var currentSongIndex: Int? {
+        queue.firstIndex(where: { $0.title == currentTitle })
+    }
+
+    func next() {
+        if let idx = currentSongIndex, idx + 1 < queue.count {
+            play(queue[idx + 1], queue: queue)
+        } else {
+            player.advanceToNextItem()
+        }
+    }
+
+    func prev() {
+        if let currentItem = player.currentItem, currentItem.currentTime().seconds > 3.0 {
+            seek(to: 0)
+            return
+        }
+        guard let idx = currentSongIndex, idx > 0 else {
+            seek(to: 0)
+            return
+        }
+        play(queue[idx - 1], queue: queue)
+    }
     func seek(to seconds: Double) { player.seek(to: CMTime(seconds: seconds, preferredTimescale: 600)) }
     func seek(toRatio ratio: Double) { seek(to: ratio * duration) }
     var repeatIcon: String { switch repeatMode { case .off: return "repeat"; case .one: return "repeat.1"; case .all: return "repeat.circle.fill" } }

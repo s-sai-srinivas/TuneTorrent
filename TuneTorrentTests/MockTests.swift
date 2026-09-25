@@ -60,4 +60,34 @@ final class FileManagerServiceTests: XCTestCase {
         // should not throw but guard prevents delete
         try svc.delete([outside])
     }
+
+    func testRenameFile() throws {
+        let svc = FileManagerService()
+        let tmp = FileManager.default.temporaryDirectory
+        let fileA = tmp.appendingPathComponent("testRenameA_\(UUID().uuidString).txt")
+        try "hello".write(to: fileA, atomically: true, encoding: .utf8)
+        let fileB = try svc.rename(fileA, to: "renamed_\(UUID().uuidString).txt")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: fileB.path))
+        try? FileManager.default.removeItem(at: fileB)
+    }
+}
+
+// MARK: - TorrentParserTests
+final class TorrentParserTests: XCTestCase {
+    func testParseMagnetWithDisplayNameAndSize() {
+        let magnet = "magnet:?xt=urn:btih:3b245504fb5f69e8201490d40fa50f0f3450e730&dn=Sample+Music+Release&xl=104857600"
+        let parsed = TorrentParser.parseMagnet(magnet)
+        XCTAssertNotNil(parsed)
+        XCTAssertEqual(parsed?.infoHash, "3b245504fb5f69e8201490d40fa50f0f3450e730")
+        XCTAssertEqual(parsed?.name, "Sample Music Release")
+        XCTAssertEqual(parsed?.exactSize, 104857600)
+    }
+}
+
+// MARK: - ZipServiceTests
+final class ZipServiceTests: XCTestCase {
+    func testEmptyUrlsDoesNotCrash() throws {
+        let dest = FileManager.default.temporaryDirectory.appendingPathComponent("empty.zip")
+        XCTAssertNoThrow(try ZipService.zip(urls: [], to: dest))
+    }
 }

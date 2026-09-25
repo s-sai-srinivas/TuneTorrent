@@ -17,11 +17,18 @@ settings:
     CODE_SIGN_IDENTITY: ""
     SKIP_INSTALL: "NO"
 
+packages:
+  ZIPFoundation:
+    url: https://github.com/weichsel/ZIPFoundation.git
+    from: 0.9.19
+
 targets:
   TuneTorrent:
     type: application
     platform: iOS
     deploymentTarget: "17.4"
+    dependencies:
+      - package: ZIPFoundation
     sources:
       - path: TuneTorrent
         excludes: ["**/*.md", "**/*.plist"]

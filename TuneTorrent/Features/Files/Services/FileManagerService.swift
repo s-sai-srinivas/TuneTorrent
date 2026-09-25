@@ -8,6 +8,7 @@ protocol FileManagerServiceProtocol {
     func delete(_ urls: [URL]) throws
     func move(_ urls: [URL], to dest: URL) throws
     func copy(_ urls: [URL], to dest: URL) throws
+    func rename(_ url: URL, to newName: String) throws -> URL
 }
 
 final class FileManagerService: FileManagerServiceProtocol {
@@ -46,5 +47,11 @@ final class FileManagerService: FileManagerServiceProtocol {
 
     func copy(_ urls: [URL], to dest: URL) throws {
         for u in urls { let d = dest.appendingPathComponent(u.lastPathComponent); try FileManager.default.copyItem(at: u, to: d) }
+    }
+
+    func rename(_ url: URL, to newName: String) throws -> URL {
+        let dest = url.deletingLastPathComponent().appendingPathComponent(newName)
+        try FileManager.default.moveItem(at: url, to: dest)
+        return dest
     }
 }

@@ -45,7 +45,7 @@ final class MusicUITests: XCTestCase {
         if firstCell.waitForExistence(timeout: 2) {
             firstCell.tap()
             // Player should show Next/Play/Pause
-            XCTAssertTrue(app.buttons["Play"].waitForExistence(timeout: 2) || app.buttons["Pause"].waitForExistence(timeout: 2) || true)
+            XCTAssertTrue(app.buttons["Play"].waitForExistence(timeout: 2) || app.buttons["Pause"].waitForExistence(timeout: 2))
         }
     }
 

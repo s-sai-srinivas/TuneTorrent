@@ -4,8 +4,16 @@ let package = Package(
     name: "TuneTorrent",
     platforms: [.iOS(.v17)],
     products: [.library(name: "TuneTorrent", targets: ["TuneTorrent"])],
+    dependencies: [
+        .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.19")
+    ],
     targets: [
-        .target(name: "TuneTorrent", path: "TuneTorrent"),
-        // .binaryTarget(name: "LibTorrent", path: "TuneTorrent/Features/Torrent/Services/LibTorrentWrapper/LibTorrent.xcframework")
+        .target(
+            name: "TuneTorrent",
+            dependencies: [
+                .product(name: "ZIPFoundation", package: "ZIPFoundation")
+            ],
+            path: "TuneTorrent"
+        )
     ]
 )

@@ -3,6 +3,7 @@ import QuickLook
 
 // MARK: - ThumbnailService
 actor ThumbnailService {
+    static let shared = ThumbnailService()
     private var cache: [String: UIImage] = [:]
 
     func thumbnail(for url: URL, size: CGSize = CGSize(width: 120, height: 120)) async -> UIImage? {

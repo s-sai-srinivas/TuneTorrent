@@ -15,7 +15,7 @@ final class MediaLibraryService: MediaLibraryServiceProtocol {
         return items.compactMap { item -> Song? in
             guard let url = item.assetURL else { return nil }
             let title = item.title ?? url.deletingPathExtension().lastPathComponent
-            return Song(urlPath: url.lastPathComponent, title: title, artist: item.artist ?? "Unknown", album: item.albumTitle ?? "Unknown", duration: item.playbackDuration, fileSize: 0)
+            return Song(urlPath: url.absoluteString, title: title, artist: item.artist ?? "Unknown", album: item.albumTitle ?? "Unknown", duration: item.playbackDuration, fileSize: 0)
         }
     }
 }

@@ -8,19 +8,31 @@ actor TorrentService {
     // Unrestricted: downloadLimit 0 = unlimited, max connections, DHT/PEX on, 6 concurrent
     private let maxConnections = 200
     func add(magnet: String, selective: [Bool]) async throws -> TorrentItem {
-        guard magnet.range(of: #"magnet:\?xt=urn:btih:[a-zA-Z0-9]{32,40}"#, options: .regularExpression) != nil else {
+        guard let info = TorrentParser.parseMagnet(magnet) else {
             throw AppError.torrentFailed("Invalid magnet link")
         }
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        guard let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            throw AppError.fileNotFound(URL(fileURLWithPath: "Documents"))
+        }
         let cap = try? docs.resourceValues(forKeys: [.volumeAvailableCapacityKey])
-        if let free = cap?.volumeAvailableCapacity, free < 50_000_000 { throw AppError.noSpace(required: 50_000_000, available: Int64(free)) }
-        let name = "Torrent-\(magnet.suffix(8))"
-        let rel = "Downloads/\(name)"
+        if let free = cap?.volumeAvailableCapacity, free < 50_000_000 {
+            throw AppError.noSpace(required: 50_000_000, available: Int64(free))
+        }
+        let sanitizedName = info.name.replacingOccurrences(of: "/", with: "-")
+        let rel = "Downloads/\(sanitizedName)"
         let url = docs.appendingPathComponent(rel)
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-        let item = TorrentItem(magnet: magnet, name: String(name), totalBytes: 700_000_000, downloadedBytes: 0, status: .downloading, savePathRelative: rel, fileSelections: selective)
+        let total = info.exactSize ?? 700_000_000
+        let item = TorrentItem(
+            magnet: magnet,
+            name: sanitizedName,
+            totalBytes: total,
+            downloadedBytes: 0,
+            status: .downloading,
+            savePathRelative: rel,
+            fileSelections: selective
+        )
         items[item.id] = item
-        // Real libtorrent: session.applySettings(downloadRateLimit: 0, uploadRateLimit: 0, connectionsLimit: 200, dht: true, pex: true, sequential: false, activeDownloads: 6)
         return item
     }
 

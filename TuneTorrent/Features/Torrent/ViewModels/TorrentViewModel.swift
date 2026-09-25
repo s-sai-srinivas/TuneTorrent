@@ -30,7 +30,11 @@ final class TorrentViewModel: ObservableObject {
 
     func poll() async {
         for await item in await service.pollStats() {
-            if let idx = torrents.firstIndex(where: { $0.id == item.id }) { torrents[idx] = item }
+            if let existing = torrents.first(where: { $0.id == item.id }) {
+                existing.downloadedBytes = item.downloadedBytes
+                existing.status = item.status
+                existing.totalBytes = item.totalBytes
+            }
             // update Live Activity
             let prog = item.totalBytes > 0 ? Double(item.downloadedBytes)/Double(item.totalBytes) : 0
             LiveActivityService.updateTorrent(progress: prog, speed: "—", peers: 12)
@@ -39,7 +43,7 @@ final class TorrentViewModel: ObservableObject {
     }
 
     func add(magnet: String, context: ModelContext) async throws {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        guard let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         let vals = try? docs.resourceValues(forKeys: [.volumeAvailableCapacityKey])
         let free = Int64(vals?.volumeAvailableCapacity ?? 0)
         if free < 100 * 1024 * 1024 { throw AppError.noSpace(required: 100 * 1024 * 1024, available: free) }
